@@ -1,8 +1,9 @@
-== NamespaceRelations ==
+== NamespaceData ==
 
-This extensions provides a way to define custom namespace tabs besides Subject and Talk tabs.
+This extensions provides a way to define a data tab for main pages and user pages besides Subject and Talk tabs.
 
 == Features ==
+* Add by default, a tab Data for main pages and user pages
 * No client-side scripting
 * Multiple tabs per root namespace (the one where new tabs are attached to)
 * Same-namespace custom tabs (via customTarget definition, see documentation)
@@ -13,9 +14,9 @@ This extensions provides a way to define custom namespace tabs besides Subject a
 
 To enable this extension, please add the following line to your LocalSettings.php:
 
-	require_once( "$IP/extensions/NamespaceRelations/NamespaceRelations.php" );
+wfLoadExtension( 'NamespaceData');
 
 == External links ==
 If you have any concerns about this extension, please refer to it's documentation:
 
-	https://www.mediawiki.org/wiki/Extension:NamespaceRelations
+	https://www.mediawiki.org/wiki/Extension:NamespaceData
