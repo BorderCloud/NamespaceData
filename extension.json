@@ -1,6 +1,6 @@
 {
 	"name": "NamespaceData",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"author": [
 		"[https://www.mediawiki.org/wiki/User:Wizardist Pavel Selitskas]",
 		"[https://www.mediawiki.org/wiki/User:Karima_Rafes Karima Rafes]"
@@ -26,7 +26,7 @@
 		"remoteExtPath": "NamespaceRelations"
 	},
 	"Hooks": {
-		"SkinTemplateNavigation": "NamespaceRelations::onSkinTemplateNavigation"
+		"SkinTemplateNavigation::Universal": "NamespaceRelations::onSkinTemplateNavigation"
 	},
 	"ConfigRegistry": {
 		"ext-conf-namespacerelations": "NamespaceRelations::makeConfig"
