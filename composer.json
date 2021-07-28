@@ -4,7 +4,7 @@
 	"type": "mediawiki-extension",
 	"require": {
 	},
-	"license": "Creative Commons",
+	"license": "GPL-2.0-or-later",
 	"authors": [
 		{
 			"name": "Karima Rafes",
