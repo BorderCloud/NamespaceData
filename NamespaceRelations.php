@@ -2,20 +2,23 @@
 
 use MediaWiki\MediaWikiServices;
 
- class NamespaceRelations {
+/**
+ * Class NamespaceRelations
+ */
+class NamespaceRelations {
 
-	const SUBJECT_WEIGHT = 10;
-	const TALK_WEIGHT = 20;
-	const STARTING_WEIGHT = 20;
-	const WEIGHT_INCREMENT = 10;
+	public const SUBJECT_WEIGHT = 10;
+	public const TALK_WEIGHT = 20;
+	public const STARTING_WEIGHT = 20;
+	public const WEIGHT_INCREMENT = 10;
 
-	 /**
-	  * Inject tabs
-	  *
-	  * @param SkinTemplate	$skinTemplate parameter of hook SkinTemplateNavigation
-	  * @param array &$navigation parameter of hook SkinTemplateNavigation
-	  * @return bool
-	  */
+	/**
+	 * Inject tabs
+	 *
+	 * @param SkinTemplate $skinTemplate parameter of hook SkinTemplateNavigation
+	 * @param array &$navigation parameter of hook SkinTemplateNavigation
+	 * @return bool
+	 */
 	public static function onSkinTemplateNavigation( $skinTemplate, &$navigation ) {
 		$nsRelations = new NamespaceRelations();
 		$nsRelations->injectTabs( $skinTemplate, $navigation['namespaces'] );
@@ -26,6 +29,9 @@ use MediaWiki\MediaWikiServices;
 		return new GlobalVarConfig( 'ext-conf-namespacerelations' );
 	}
 
+	/**
+	 * @var int
+	 */
 	private $currentWeight = self::STARTING_WEIGHT;
 
 	/**
@@ -57,26 +63,25 @@ use MediaWiki\MediaWikiServices;
 	private $namespacesSubjectPattern;
 
 	public function __construct() {
-		// global $wgNamespaceRelations;
 		$config = ConfigFactory::getDefaultInstance()->makeConfig( 'ext-conf-namespacerelations' );
-		$wgNamespaceRelations = [];
+		$namespaceRelations = [];
 		if ( !$config->has( "NamespaceRelations" ) ) {
 			// throw new MWException( "NamespaceRelations is not precised in the extension.json." );
 		} else {
-			$wgNamespaceRelations = $config->get( "NamespaceRelations" );
+			$namespaceRelations = $config->get( "NamespaceRelations" );
 		}
 
 		$this->namespaces = [];
-		if ( !empty( $wgNamespaceRelations ) ) {
-			foreach ( $wgNamespaceRelations as $key => $data ) {
+		if ( !empty( $namespaceRelations ) ) {
+			foreach ( $namespaceRelations as $key => $data ) {
 				$this->setNamespace( $key, null,
 					[
-						 'message'    => 'nstab-extra-' . $key,
-						 'namespace'  => $data['namespace'],
-						 'target'     => $data['target'],
-						 'inMainPage' => isset( $data['inMainPage'] ) ? $data['inMainPage'] : false,
-						 'query'      => isset( $data['query'] ) ? $data['query'] : '',
-						 'hideTalk'   => isset( $data['hideTalk'] ) ? $data['hideTalk'] : false
+						'message' => 'nstab-extra-' . $key,
+						'namespace' => $data['namespace'],
+						'target' => $data['target'],
+						'inMainPage' => isset( $data['inMainPage'] ) ? $data['inMainPage'] : false,
+						'query' => isset( $data['query'] ) ? $data['query'] : '',
+						'hideTalk' => isset( $data['hideTalk'] ) ? $data['hideTalk'] : false
 					] );
 				if ( !isset( $data['weight'] ) ) {
 					$this->setNamespace( $key, 'weight', $this->generateWeight() );
@@ -170,14 +175,14 @@ use MediaWiki\MediaWikiServices;
 				}
 
 				$tabOptions = [
-					'title'       => $this->getCustomTargetTitle( $key, $rootText ),
-					'messages'    => $this->getNamespace( $key, 'message' ),
-					'query'       => $this->getKeyQuery(
+					'title' => $this->getCustomTargetTitle( $key, $rootText ),
+					'messages' => $this->getNamespace( $key, 'message' ),
+					'query' => $this->getKeyQuery(
 						$key,
 						$this->getCustomTargetTitle( $key, $rootText )
 					),
 					'checkExists' => $userCanRead,
-					'weight'      => $this->getNamespace( $key, 'weight' )
+					'weight' => $this->getNamespace( $key, 'weight' )
 				];
 				if ( $title->equals( $tabOptions['title'] ) ) {
 					$tabOptions['isActive'] = true;
@@ -227,15 +232,15 @@ use MediaWiki\MediaWikiServices;
 
 			foreach ( $this->namespacesToNamespace[$subjectNS] as $key ) {
 				$tabOptions = [
-					'title'       => $this->getCustomTargetTitle( $key, $rootText ),
-					'messages'    => $this->getNamespace( $key, 'message' ),
-					'query'       => $this->getKeyQuery(
+					'title' => $this->getCustomTargetTitle( $key, $rootText ),
+					'messages' => $this->getNamespace( $key, 'message' ),
+					'query' => $this->getKeyQuery(
 						$key,
 						$this->getCustomTargetTitle( $key, $rootText )
 					),
 					'checkExists' => $userCanRead,
-					'weight'      => $this->getNamespace( $key, 'weight' ),
-					'isActive'    => false
+					'weight' => $this->getNamespace( $key, 'weight' ),
+					'isActive' => false
 				];
 				if ( $title->equals( $tabOptions['title'] ) ) {
 					$tabOptions['isActive'] = true;
@@ -250,8 +255,8 @@ use MediaWiki\MediaWikiServices;
 				if ( isset( $tabs['talk'] ) ) {
 					if (
 						( $tabs['subject']['title']->isMainPage()
-						&& $this->getNamespace( $key, 'inMainPage' )
-						&& $this->getNamespace( $key, 'hideTalk' ) )
+							&& $this->getNamespace( $key, 'inMainPage' )
+							&& $this->getNamespace( $key, 'hideTalk' ) )
 						|| $this->getNamespace( $key, 'hideTalk' )
 					) {
 						unset( $tabs['talk'] );
@@ -303,12 +308,12 @@ use MediaWiki\MediaWikiServices;
 	 */
 	private function makeSubjectTab( $subjectNS, $subjectTitle, $options = [] ) {
 		$defaultOptions = [
-			'messages'    => [],
-			'isActive'    => false,
-			'query'       => '',
+			'messages' => [],
+			'isActive' => false,
+			'query' => '',
 			'checkExists' => true,
-			'weight'      => self::SUBJECT_WEIGHT,
-			'context'     => 'subject'
+			'weight' => self::SUBJECT_WEIGHT,
+			'context' => 'subject'
 		];
 		$options = array_replace( $defaultOptions, $options );
 
@@ -334,12 +339,12 @@ use MediaWiki\MediaWikiServices;
 	 */
 	private function makeTalkTab( $talkNS, $talkTitle, $options = [] ) {
 		$defaultOptions = [
-			'messages'    => [],
-			'isActive'    => false,
-			'query'       => '',
+			'messages' => [],
+			'isActive' => false,
+			'query' => '',
 			'checkExists' => true,
-			'weight'      => self::TALK_WEIGHT,
-			'context'     => 'talk'
+			'weight' => self::TALK_WEIGHT,
+			'context' => 'talk'
 		];
 		$options = array_replace( $defaultOptions, $options );
 
@@ -363,11 +368,11 @@ use MediaWiki\MediaWikiServices;
 	 */
 	private function makeTab( $tabNS, $tabTitle, $options = [] ) {
 		$defaultOptions = [
-			'messages'    => [],
-			'isActive'    => false,
-			'query'       => '',
+			'messages' => [],
+			'isActive' => false,
+			'query' => '',
 			'checkExists' => true,
-			'weight'      => $this->generateWeight()
+			'weight' => $this->generateWeight()
 		];
 		$options = array_replace( $defaultOptions, $options );
 
@@ -406,7 +411,7 @@ use MediaWiki\MediaWikiServices;
 	 * @param array &$navigation
 	 */
 	private function sortNavigation( &$navigation ) {
-		uasort( $navigation, function ( $first, $second ) {
+		uasort( $navigation, static function ( $first, $second ) {
 			return $first['weight'] - $second['weight'];
 		} );
 	}
@@ -550,4 +555,4 @@ use MediaWiki\MediaWikiServices;
 
 		return $this->currentWeight;
 	}
- }
+}

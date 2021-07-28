@@ -40,9 +40,9 @@
 					"namespace": 0,
 					"target": 10000
 				},
-				"data_user" : {
-					"namespace" : 2,
-					"target" : 10002
+				"data_user": {
+					"namespace": 2,
+					"target": 10002
 				}
 			}
 		}
