@@ -10,9 +10,7 @@
 	},
 	"rules": {
 		"no-jquery/no-parse-html-literal": "warn",
-		"no-jquery/no-global-selector": [ "warn", { "allowIds": true } ],
-		"mediawiki/msg-doc": "warn",
-		"no-use-before-define": "off",
-		"no-jquery/no-fade": "off"
+		"no-jquery/no-global-selector": "warn",
+		"mediawiki/msg-doc": "warn"
 	}
 }
