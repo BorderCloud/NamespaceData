@@ -4,5 +4,5 @@
 			"Gomoko"
 		]
 	},
-	"nsrels-desc": "Permet de définir des onglets d'espace de noms supplémentaires"
+	"nsdata-desc": "Créer un onglet Data pour les pages principales et utilisateurs afin d'ouvrir les pages dans l'espace de noms Data et UserData"
 }

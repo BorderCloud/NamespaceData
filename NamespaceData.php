@@ -3,9 +3,9 @@
 use MediaWiki\MediaWikiServices;
 
 /**
- * Class NamespaceRelations
+ * Class NamespaceData
  */
-class NamespaceRelations {
+class NamespaceData {
 
 	public const SUBJECT_WEIGHT = 10;
 	public const TALK_WEIGHT = 20;
@@ -20,13 +20,13 @@ class NamespaceRelations {
 	 * @return bool
 	 */
 	public static function onSkinTemplateNavigation( $skinTemplate, &$navigation ) {
-		$nsRelations = new NamespaceRelations();
+		$nsRelations = new NamespaceData();
 		$nsRelations->injectTabs( $skinTemplate, $navigation['namespaces'] );
 		return true;
 	}
 
 	public static function makeConfig() {
-		return new GlobalVarConfig( 'ext-conf-namespacerelations' );
+		return new GlobalVarConfig( 'egNamespaceData' );
 	}
 
 	/**
@@ -35,7 +35,7 @@ class NamespaceRelations {
 	private $currentWeight = self::STARTING_WEIGHT;
 
 	/**
-	 * Processed $wgNamespaceRelations configuration
+	 * Processed $wgNamespaceData configuration
 	 *
 	 * @var array
 	 */
@@ -63,17 +63,17 @@ class NamespaceRelations {
 	private $namespacesSubjectPattern;
 
 	public function __construct() {
-		$config = ConfigFactory::getDefaultInstance()->makeConfig( 'ext-conf-namespacerelations' );
-		$namespaceRelations = [];
-		if ( !$config->has( "NamespaceRelations" ) ) {
-			// throw new MWException( "NamespaceRelations is not precised in the extension.json." );
+		$config = ConfigFactory::getDefaultInstance()->makeConfig( 'egNamespaceData' );
+		$namespaceData = [];
+		if ( !$config->has( "NamespaceData" ) ) {
+			// throw new MWException( "NamespaceData is not precised in the extension.json." );
 		} else {
-			$namespaceRelations = $config->get( "NamespaceRelations" );
+			$namespaceData = $config->get( "NamespaceData" );
 		}
 
 		$this->namespaces = [];
-		if ( !empty( $namespaceRelations ) ) {
-			foreach ( $namespaceRelations as $key => $data ) {
+		if ( !empty( $namespaceData ) ) {
+			foreach ( $namespaceData as $key => $data ) {
 				$this->setNamespace( $key, null,
 					[
 						'message' => 'nstab-extra-' . $key,
@@ -499,7 +499,7 @@ class NamespaceRelations {
 	 * @param string|null $param NS tab parameter
 	 * @param mixed $value Value to set, defines the whole tab if param is null
 	 *
-	 * @return NamespaceRelations
+	 * @return NamespaceData
 	 */
 	private function setNamespace( $key, $param = null, $value = null ) {
 		if ( $param === null && $value !== null ) {

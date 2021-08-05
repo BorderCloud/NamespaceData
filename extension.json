@@ -1,12 +1,12 @@
 {
 	"name": "NamespaceData",
-	"version": "1.1.0",
+	"version": "2.0.0",
 	"author": [
 		"[https://www.mediawiki.org/wiki/User:Wizardist Pavel Selitskas]",
 		"[https://www.mediawiki.org/wiki/User:Karima_Rafes Karima Rafes]"
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:NamespaceData",
-	"descriptionmsg": "nsrels-desc",
+	"descriptionmsg": "nsdata-desc",
 	"license-name": "GPL-2.0-or-later",
 	"type": "other",
 	"manifest_version": 2,
@@ -14,26 +14,26 @@
 		"MediaWiki": ">= 1.31.1"
 	},
 	"MessagesDirs": {
-		"NamespaceRelations": [
+		"NamespaceData": [
 			"i18n"
 		]
 	},
 	"AutoloadClasses": {
-		"NamespaceRelations": "NamespaceRelations.php"
+		"NamespaceData": "NamespaceData.php"
 	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "",
-		"remoteExtPath": "NamespaceRelations"
+		"remoteExtPath": "NamespaceData"
 	},
 	"Hooks": {
-		"SkinTemplateNavigation::Universal": "NamespaceRelations::onSkinTemplateNavigation"
+		"SkinTemplateNavigation::Universal": "NamespaceData::onSkinTemplateNavigation"
 	},
 	"ConfigRegistry": {
-		"ext-conf-namespacerelations": "NamespaceRelations::makeConfig"
+		"egNamespaceData": "NamespaceData::makeConfig"
 	},
-	"config_prefix": "ext-conf-namespacerelations",
+	"config_prefix": "egNamespaceData",
 	"config": {
-		"NamespaceRelations": {
+		"NamespaceData": {
 			"description": "List of custom tabs",
 			"value": {
 				"data_main": {
