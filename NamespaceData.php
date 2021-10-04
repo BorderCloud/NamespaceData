@@ -62,8 +62,16 @@ class NamespaceData {
 	 */
 	private $namespacesSubjectPattern;
 
+	/**
+	 * Instance of Mediawiki services
+	 *
+	 * @var MediaWikiServices
+	 */
+	private $services;
+
 	public function __construct() {
-		$config = ConfigFactory::getDefaultInstance()->makeConfig( 'egNamespaceData' );
+		$this->services = MediaWikiServices::getInstance();
+		$config = $this->services->getConfigFactory()->makeConfig( 'egNamespaceData' );
 		$namespaceData = [];
 		if ( !$config->has( "NamespaceData" ) ) {
 			// throw new MWException( "NamespaceData is not precised in the extension.json." );
@@ -108,7 +116,7 @@ class NamespaceData {
 	public function injectTabs( $skinTemplate, &$navigation ) {
 		$title = $skinTemplate->getRelevantTitle();
 		$titleText = $title->getText();
-		$subjectNS = $title->getSubjectPage()->getNamespace();
+		$subjectNS = $this->services->getNamespaceInfo()->getSubjectPage( $title )->getNamespace();
 		$rootText = $this->getRootTitle( $titleText, $subjectNS );
 		// the root title to link other tabs against
 
@@ -118,7 +126,8 @@ class NamespaceData {
 				->getPermissionManager()
 				->quickUserCan( 'read', $skinTemplate->getUser(), $title );
 		} else {
-			$userCanRead = $title->quickUserCan( 'read', $skinTemplate->getUser() );
+			$userCanRead = $this->services->getPermissionManager()
+				->quickUserCan( 'read', $skinTemplate->getUser() );
 		}
 
 		/**
@@ -150,21 +159,21 @@ class NamespaceData {
 			// make a Talk tab
 			$talkOptions['checkExists'] = $userCanRead;
 			$talkOptions['title'] = Title::makeTitle(
-				MWNamespace::getTalk( $subjectNS ),
+				$this->services->getNamespaceInfo()->getTalk( $subjectNS ),
 				$rootText
 			);
 			if ( $title->equals( $talkOptions['title'] ) ) {
 				$talkOptions['isActive'] = true;
 			}
 			$tabs['talk'] = $this->makeTalkTab(
-				MWNamespace::getTalk( $subjectNS ),
+				$this->services->getNamespaceInfo()->getTalk( $subjectNS ),
 				$rootText,
 				$talkOptions
 			);
 			unset( $talkOptions );
 
 			foreach ( $this->namespacesToNamespace[$subjectNS] as $key ) {
-				if ( $title->getSubjectPage()->isMainPage()
+				if ( $title->isMainPage()
 					&& !$this->getNamespace( $key, 'inMainPage' )
 				) {
 					continue;
@@ -217,14 +226,14 @@ class NamespaceData {
 			// make a Talk tab
 			$talkOptions['checkExists'] = $userCanRead;
 			$talkOptions['title'] = Title::makeTitle(
-				MWNamespace::getTalk( $subjectNS ),
+				$this->services->getNamespaceInfo()->getTalk( $subjectNS ),
 				$rootText
 			);
 			if ( $title->equals( $talkOptions['title'] ) ) {
 				$talkOptions['isActive'] = true;
 			}
 			$tabs['talk'] = $this->makeTalkTab(
-				MWNamespace::getTalk( $subjectNS ),
+				$this->services->getNamespaceInfo()->getTalk( $subjectNS ),
 				$rootText,
 				$talkOptions
 			);
@@ -396,7 +405,7 @@ class NamespaceData {
 	private function getCustomTargetTitle( $key, $title, $raw = false ) {
 		$customTarget = $this->getNamespace( $key, 'customTarget' );
 		if ( $customTarget !== null ) {
-			$title = wfMsgReplaceArgs( $customTarget, [ $title ] );
+			$title = self::msgReplaceArgs( $customTarget, [ $title ] );
 		}
 		if ( $raw ) {
 			return $title;
@@ -458,7 +467,7 @@ class NamespaceData {
 	 * @return array
 	 */
 	private function getDefaultTabsIDs( $title ) {
-		$subjectId = $title->getSubjectPage()->getNamespaceKey( '' );
+		$subjectId = $title->getNamespaceKey( '' );
 		if ( $subjectId == 'main' ) {
 			$talkId = 'talk';
 		} else {
@@ -520,7 +529,7 @@ class NamespaceData {
 	 * @throws MWException Thrown if namespace doesn't exist
 	 */
 	private function addToNamespace( $ns, $key ) {
-		if ( MWNamespace::exists( $ns ) ) {
+		if ( $this->services->getNamespaceInfo()->exists( $ns ) ) {
 			$this->namespacesToNamespace[$ns][] = $key;
 		} else {
 			throw new MWException( "Namespace doesn't exist." );
@@ -536,10 +545,10 @@ class NamespaceData {
 	 * @throws MWException Thrown if namespace doesn't exist
 	 */
 	private function addToTarget( $ns, $key ) {
-		if ( MWNamespace::exists( $ns ) ) {
+		if ( $this->services->getNamespaceInfo()->exists( $ns ) ) {
 			$this->namespacesToTarget[$ns] = $key;
 		} else {
-			throw new MWException( "Namespace doesn't exist." );
+			throw new MWException( "Namespace '" . $key . "' (id:" . $ns . ") doesn't exist." );
 		}
 	}
 
@@ -554,5 +563,33 @@ class NamespaceData {
 		$this->currentWeight += $increment;
 
 		return $this->currentWeight;
+	}
+
+	/**
+	 * Replace message parameter keys on the given formatted output.
+	 *
+	 * @param string $message
+	 * @param array $args
+	 * @return string
+	 * @internal
+	 */
+	private static function msgReplaceArgs( $message, $args ) {
+		# Fix windows line-endings
+		# Some messages are split with explode("\n", $msg)
+		$message = str_replace( "\r", '', $message );
+
+		// Replace arguments
+		if ( is_array( $args ) && $args ) {
+			if ( is_array( $args[0] ) ) {
+				$args = array_values( $args[0] );
+			}
+			$replacementKeys = [];
+			foreach ( $args as $n => $param ) {
+				$replacementKeys['$' . ( $n + 1 )] = $param;
+			}
+			$message = strtr( $message, $replacementKeys );
+		}
+
+		return $message;
 	}
 }

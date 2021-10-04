@@ -1,7 +1,7 @@
 == NamespaceData ==
 
 The '''NamespaceData''' extension provides a way to define a data tab for main pages and user pages besides Subject and Talk tabs.
-Only users in the new Data user group can see this tab and can change the pages in the Data namespace.
+Only users in the new Data user group can see this tab and can change the pages in the Data and UserData namespaces.
 
 This extension is a fork of the [[Extension:NamespaceRelations|NamespaceRelations extension]].
 This extension is maintained at the same time as the [[Extension:LinkedWiki|LinkedWiki extension]].
