@@ -6,7 +6,12 @@
 	"devDependencies": {
 		"api-testing": "1.7.1",
 		"grunt-jsonlint": "3.0.0",
+		"eslint-config-wikimedia": "0.29.1",
+		"grunt": "1.6.1",
+		"grunt-banana-checker": "0.13.0",
+		"grunt-eslint": "24.3.0",
 		"grunt-stylelint": "0.20.1",
+		"sass": "^1.69.3",
 		"stylelint-config-wikimedia": "0.18.0"
 	},
 	"eslintIgnore": [
